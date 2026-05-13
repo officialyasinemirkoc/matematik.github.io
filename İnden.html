@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASAL KALE — Sayılar Savaşı</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Crimson+Pro:ital,wght@0,300;0,600;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a12;
+    --panel: #10101e;
+    --gold: #c9a84c;
+    --gold2: #f0cc7a;
+    --crimson: #8b1a1a;
+    --crimson2: #c0392b;
+    --emerald: #1a4a2e;
+    --emerald2: #27ae60;
+    --sapphire: #1a2a5a;
+    --sapphire2: #2980b9;
+    --silver: #a8b2c0;
+    --white: #f0ede6;
+    --border: rgba(201,168,76,0.3);
+    --glow: rgba(201,168,76,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Crimson Pro', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(26,42,90,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,26,26,0.3) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: flex; }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+    gap: 1.5rem;
+    position: relative;
+  }
+
+  .intro-deco {
+    position: absolute;
+    font-size: 8rem;
+    opacity: 0.04;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .intro-deco.tl { top: 2%; left: 1%; }
+  .intro-deco.tr { top: 2%; right: 1%; }
+  .intro-deco.bl { bottom: 2%; left: 1%; }
+  .intro-deco.br { bottom: 2%; right: 1%; }
+
+  .logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 900;
+    color: var(--gold2);
+    text-shadow: 0 0 40px rgba(201,168,76,0.5), 0 0 80px rgba(201,168,76,0.2);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    animation: flicker 4s infinite;
+  }
+
+  @keyframes flicker {
+    0%,95%,100% { text-shadow: 0 0 40px rgba(201,168,76,0.5), 0 0 80px rgba(201,168,76,0.2); }
+    96% { text-shadow: 0 0 20px rgba(201,168,76,0.3); }
+    97% { text-shadow: 0 0 60px rgba(201,168,76,0.7), 0 0 100px rgba(201,168,76,0.4); }
+  }
+
+  .subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--silver);
+    letter-spacing: 0.2em;
+  }
+
+  .divider {
+    width: 300px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0.5rem auto;
+  }
+
+  .intro-desc {
+    max-width: 560px;
+    font-size: 1.1rem;
+    color: var(--silver);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .intro-desc strong { color: var(--gold2); font-weight: 600; }
+
+  .rules-box {
+    background: rgba(16,16,30,0.8);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    max-width: 600px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .rules-box::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .rules-box h3 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .rule-item {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--silver);
+    line-height: 1.5;
+  }
+  .rule-item .rnum {
+    color: var(--gold2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 1.5rem;
+    margin-top: 0.1rem;
+  }
+
+  .btn {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.9rem 2.5rem;
+    border: 2px solid var(--gold);
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    color: var(--gold2);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { color: var(--white); border-color: var(--gold2); transform: translateY(-1px); }
+  .btn:hover::before { opacity: 1; }
+  .btn:active { transform: translateY(0); }
+
+  .btn.danger {
+    border-color: var(--crimson2);
+    background: linear-gradient(135deg, rgba(192,57,43,0.2), rgba(192,57,43,0.05));
+    color: #e74c3c;
+  }
+  .btn.danger:hover { color: var(--white); border-color: #e74c3c; }
+
+  .btn.success {
+    border-color: var(--emerald2);
+    background: linear-gradient(135deg, rgba(39,174,96,0.2), rgba(39,174,96,0.05));
+    color: var(--emerald2);
+  }
+  .btn.success:hover { color: var(--white); }
+
+  /* ── GAME SCREEN ── */
+  #game {
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,18,0.95);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .game-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+  }
+
+  .turn-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    border: 1px solid;
+    letter-spacing: 0.05em;
+    transition: all 0.3s;
+  }
+  .turn-badge.knight {
+    border-color: var(--sapphire2);
+    background: rgba(41,128,185,0.15);
+    color: #74b9ff;
+  }
+  .turn-badge.dragon {
+    border-color: var(--crimson2);
+    background: rgba(192,57,43,0.15);
+    color: #e17055;
+  }
+
+  .score-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .score-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .score-chip .label { color: var(--silver); }
+  .score-chip .val { font-weight: 700; font-size: 1rem; }
+  .score-chip.knight .val { color: #74b9ff; }
+  .score-chip.dragon .val { color: #e17055; }
+
+  /* ── GAME BODY ── */
+  .game-body {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 0;
+    flex: 1;
+    min-height: calc(100vh - 60px);
+  }
+
+  @media (max-width: 900px) {
+    .game-body { grid-template-columns: 1fr; }
+  }
+
+  .side-panel {
+    background: rgba(10,10,18,0.6);
+    border-right: 1px solid var(--border);
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+  }
+  .side-panel.right {
+    border-right: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .panel-head {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.8rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── CASTLE BOARD ── */
+  .main-area {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    background: radial-gradient(ellipse at center, rgba(26,42,90,0.15) 0%, transparent 70%);
+  }
+
+  .castle-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--silver);
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  /* ── NUMBER DISPLAY ── */
+  .number-display {
+    background: rgba(16,16,30,0.9);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 500px;
+  }
+  .number-display::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.07) 0%, transparent 60%);
+  }
+
+  .num-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--silver);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.3rem;
+  }
+
+  .num-big {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: var(--gold2);
+    font-weight: 900;
+    text-shadow: 0 0 30px rgba(201,168,76,0.4);
+    line-height: 1;
+    transition: all 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .num-big.pop {
+    animation: numPop 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes numPop {
+    0% { transform: scale(0.7); opacity: 0.3; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .factor-chain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--emerald2);
+    margin-top: 0.4rem;
+    min-height: 1.3rem;
+    transition: all 0.3s;
+  }
+
+  /* ── CASTLE GRID ── */
+  .castle-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .castle-cell {
+    aspect-ratio: 1;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background: rgba(16,16,30,0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--silver);
+    overflow: hidden;
+  }
+
+  .castle-cell:hover:not(.captured):not(.disabled) {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.15);
+    color: var(--gold2);
+    transform: scale(1.05);
+    z-index: 2;
+  }
+
+  .castle-cell.highlight {
+    border-color: var(--gold2);
+    box-shadow: 0 0 12px rgba(201,168,76,0.4);
+    animation: pulse-gold 1s infinite alternate;
+  }
+
+  @keyframes pulse-gold {
+    from { box-shadow: 0 0 8px rgba(201,168,76,0.3); border-color: rgba(201,168,76,0.6); }
+    to { box-shadow: 0 0 18px rgba(201,168,76,0.6); border-color: var(--gold2); }
+  }
+
+  .castle-cell.knight {
+    background: rgba(41,128,185,0.2);
+    border-color: var(--sapphire2);
+    color: #74b9ff;
+    cursor: default;
+  }
+  .castle-cell.knight::after {
+    content: '⚔';
+    position: absolute;
+    font-size: 1.4rem;
+    opacity: 0.3;
+  }
+
+  .castle-cell.dragon {
+    background: rgba(192,57,43,0.2);
+    border-color: var(--crimson2);
+    color: #e17055;
+    cursor: default;
+  }
+  .castle-cell.dragon::after {
+    content: '🔥';
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0.4;
+  }
+
+  .castle-cell.prime {
+    border-style: dashed;
+  }
+
+  .castle-cell .cell-type {
+    font-size: 0.55rem;
+    color: rgba(168,178,192,0.5);
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-weight: 400;
+  }
+
+  .castle-cell.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ── ACTION AREA ── */
+  .action-area {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .action-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--silver);
+    letter-spacing: 0.15em;
+    text-align: center;
+  }
+
+  .spell-row {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .spell-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+
+  .spell-btn.ebob {
+    border-color: var(--emerald2);
+    color: var(--emerald2);
+  }
+  .spell-btn.ebob:hover:not(:disabled) {
+    background: rgba(39,174,96,0.2);
+    box-shadow: 0 0 12px rgba(39,174,96,0.3);
+  }
+
+  .spell-btn.ekok {
+    border-color: var(--sapphire2);
+    color: var(--sapphire2);
+  }
+  .spell-btn.ekok:hover:not(:disabled) {
+    background: rgba(41,128,185,0.2);
+    box-shadow: 0 0 12px rgba(41,128,185,0.3);
+  }
+
+  .spell-btn.kalan {
+    border-color: var(--crimson2);
+    color: var(--crimson2);
+  }
+  .spell-btn.kalan:hover:not(:disabled) {
+    background: rgba(192,57,43,0.2);
+    box-shadow: 0 0 12px rgba(192,57,43,0.3);
+  }
+
+  .spell-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .spell-btn .cooldown {
+    font-size: 0.6rem;
+    color: rgba(168,178,192,0.5);
+    display: block;
+    text-align: center;
+  }
+
+  /* ── INFO CARDS ── */
+  .info-card {
+    background: rgba(16,16,30,0.7);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.9rem;
+    font-size: 0.85rem;
+    color: var(--silver);
+    line-height: 1.6;
+  }
+  .info-card .ic-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .info-card .ic-icon { font-size: 1rem; }
+
+  .info-card .highlight { color: var(--gold2); font-weight: 600; }
+  .info-card .green { color: var(--emerald2); }
+  .info-card .blue { color: #74b9ff; }
+  .info-card .red { color: #e17055; }
+
+  /* ── LOG ── */
+  .log-box {
+    background: rgba(10,10,18,0.8);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 3px;
+    padding: 0.7rem;
+    height: 180px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--silver);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .log-entry {
+    padding: 0.2rem 0;
+    border-bottom: 1px solid rgba(201,168,76,0.05);
+    line-height: 1.4;
+  }
+  .log-entry .lt { color: rgba(168,178,192,0.4); }
+  .log-entry.knight-log { color: #74b9ff; }
+  .log-entry.dragon-log { color: #e17055; }
+  .log-entry.system-log { color: var(--gold); font-style: italic; }
+  .log-entry.success-log { color: var(--emerald2); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .modal::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top, rgba(201,168,76,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .modal h2 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.6rem;
+    color: var(--gold2);
+    margin-bottom: 0.5rem;
+  }
+  .modal p {
+    color: var(--silver);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  .modal .big-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold2);
+    text-shadow: 0 0 20px rgba(201,168,76,0.5);
+  }
+  .modal-btns { display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+
+  /* ── WIZARD PANEL ── */
+  .wizard-box {
+    background: rgba(16,16,30,0.8);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .wizard-input-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .wizard-input {
+    background: rgba(10,10,18,0.8);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.4rem 0.7rem;
+    border-radius: 2px;
+    width: 80px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .wizard-input:focus { border-color: var(--gold2); }
+
+  .wizard-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--silver);
+    letter-spacing: 0.08em;
+  }
+
+  .wizard-result {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--emerald2);
+    min-height: 1.2rem;
+    padding: 0.3rem;
+    background: rgba(39,174,96,0.05);
+    border-radius: 2px;
+    border-left: 2px solid rgba(39,174,96,0.3);
+    padding-left: 0.5rem;
+  }
+
+  /* ── HP BAR ── */
+  .hp-bar-wrap { margin-bottom: 0.3rem; }
+  .hp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--silver);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+  }
+  .hp-bar {
+    height: 8px;
+    background: rgba(16,16,30,0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(168,178,192,0.1);
+  }
+  .hp-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .hp-fill.knight { background: linear-gradient(90deg, #2980b9, #74b9ff); }
+  .hp-fill.dragon { background: linear-gradient(90deg, #8b1a1a, #e17055); }
+
+  /* ── QUICK ANSWER GLOW ── */
+  @keyframes correctFlash {
+    0% { box-shadow: inset 0 0 0 2px var(--emerald2); }
+    50% { box-shadow: inset 0 0 20px rgba(39,174,96,0.5), 0 0 30px rgba(39,174,96,0.3); }
+    100% { box-shadow: inset 0 0 0 2px var(--emerald2); }
+  }
+
+  .castle-cell.just-captured {
+    animation: correctFlash 0.6s ease;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    height: 4px;
+    background: rgba(201,168,76,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.3rem;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+
+  /* ── TURN TIMER ── */
+  .timer-ring {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(201,168,76,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold2);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.5s;
+  }
+  .timer-ring.urgent { border-color: var(--crimson2); color: #e17055; animation: urgentPulse 0.5s infinite alternate; }
+  @keyframes urgentPulse {
+    from { box-shadow: 0 0 0 rgba(192,57,43,0.3); }
+    to { box-shadow: 0 0 10px rgba(192,57,43,0.5); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ INTRO SCREEN ══════════════════ -->
+<div id="intro" class="screen active">
+  <div class="intro-deco tl">∞</div>
+  <div class="intro-deco tr">∑</div>
+  <div class="intro-deco bl">π</div>
+  <div class="intro-deco br">√</div>
+
+  <div class="logo">ASAL<br>KALE</div>
+  <div class="subtitle">— sayılar savaşı —</div>
+  <div class="divider"></div>
+
+  <p class="intro-desc">
+    Bir <strong>Şövalye</strong> ile bir <strong>Ejderha</strong> arasındaki matematiksel savaş.<br>
+    Kale hücrelerini fethet, <strong>EBOB</strong>, <strong>EKOK</strong> ve <strong>kalan büyüsü</strong> kullan.<br>
+    En fazla hücreyi ele geçiren savaşı kazanır.
+  </p>
+
+  <div class="rules-box">
+    <h3>⚔ SAVAŞ KURALLARI</h3>
+    <div class="rule-item"><span class="rnum">1.</span><span>Her tur bir <strong>hedef sayı</strong> belirir. Kalede bu sayıya ait <strong>bölen</strong> veya <strong>asal çarpan</strong> olan hücreye tıkla.</span></div>
+    <div class="rule-item"><span class="rnum">2.</span><span>Doğru hücre seçersen o hücreyi <strong>fethediyorsun</strong>. Yanlış seçersen rakip puan alıyor.</span></div>
+    <div class="rule-item"><span class="rnum">3.</span><span><strong>EBOB Kalkanı:</strong> İki sayının EBOB'unu bul, o kadar hücreyi savun. (Tur başına 1 kez)</span></div>
+    <div class="rule-item"><span class="rnum">4.</span><span><strong>EKOK Saldırısı:</strong> İki sayının EKOK'unu bul, ek hücre kazan. (2 turda 1 kez)</span></div>
+    <div class="rule-item"><span class="rnum">5.</span><span><strong>Kalan Büyüsü:</strong> Bölme kalanını bul, rakipten hücre çal. (3 turda 1 kez)</span></div>
+    <div class="rule-item"><span class="rnum">6.</span><span>24 tur sonra veya kale dolunca oyun biter. <strong>En çok hücre</strong> olan kazanır!</span></div>
+  </div>
+
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+    <button class="btn" onclick="startGame('pvp')">⚔ İki Oyuncu</button>
+    <button class="btn" onclick="startGame('ai')">🤖 Bilgisayara Karşı</button>
+  </div>
+</div>
+
+<!-- ══════════════════ GAME SCREEN ══════════════════ -->
+<div id="game" class="screen">
+
+  <!-- Header -->
+  <div class="game-header">
+    <div class="game-title">ASAL KALE</div>
+    <div id="turn-badge" class="turn-badge knight">⚔ ŞÖVALYENİN TURU</div>
+    <div style="display:flex;align-items:center;gap:0.8rem;">
+      <div class="timer-ring" id="timer-ring">30</div>
+      <div class="score-row">
+        <div class="score-chip knight">
+          <span class="label">⚔</span>
+          <span class="val" id="score-knight">0</span>
+        </div>
+        <span style="color:var(--border);font-size:0.8rem;">|</span>
+        <div class="score-chip dragon">
+          <span class="label">🔥</span>
+          <span class="val" id="score-dragon">0</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <div id="turn-counter" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--silver);">Tur 1/24</div>
+        <button class="btn danger" onclick="goHome()" style="font-size:0.65rem;padding:0.3rem 0.7rem;">↩ Çıkış</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-body">
+
+    <!-- LEFT PANEL: Knight -->
+    <div class="side-panel">
+      <div class="panel-head">⚔ ŞÖVALYENİN GÜÇLERİ</div>
+
+      <div>
+        <div class="hp-bar-wrap">
+          <div class="hp-label"><span>⚔ Şövalye HP</span><span id="hp-knight-val">100</span></div>
+          <div class="hp-bar"><div class="hp-fill knight" id="hp-knight-bar" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-title"><span class="ic-icon">🟢</span> EBOB Kalkanı</div>
+        <div id="ebob-info-k" class="green">Hazır</div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-title"><span class="ic-icon">🔵</span> EKOK Saldırısı</div>
+        <div id="ekok-info-k" class="blue">Hazır</div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-title"><span class="ic-icon">🔴</span> Kalan Büyüsü</div>
+        <div id="kalan-info-k" class="red">Hazır</div>
+      </div>
+
+      <div class="wizard-box">
+        <div class="wizard-label">🧮 HIZLI HESAP</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;">
+          <input type="number" class="wizard-input" id="calc-a" placeholder="a" min="1" max="999">
+          <span style="color:var(--gold);font-family:'JetBrains Mono'">÷</span>
+          <input type="number" class="wizard-input" id="calc-b" placeholder="b" min="1" max="999">
+        </div>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+          <button class="spell-btn ebob" onclick="calcEBOB()">EBOB</button>
+          <button class="spell-btn ekok" onclick="calcEKOK()">EKOK</button>
+          <button class="spell-btn kalan" onclick="calcKalan()">KALAN</button>
+        </div>
+        <div class="wizard-result" id="wizard-result">—</div>
+      </div>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+      <!-- Number Display -->
+      <div class="number-display">
+        <div class="num-label">HEDEF SAYI</div>
+        <div class="num-big" id="target-num">?</div>
+        <div class="factor-chain" id="factor-chain"></div>
+      </div>
+
+      <div class="castle-title">⬡ KALE HARİTASI — Bir hücre seç</div>
+
+      <!-- Castle Grid: 6x6 = 36 hücre (2–37 arası sayılar) -->
+      <div class="castle-grid" id="castle-grid"></div>
+
+      <!-- Action Area -->
+      <div class="action-area">
+        <div class="action-label">— SİHİR YETENEKLERİ —</div>
+        <div class="spell-row">
+          <button class="spell-btn ebob" id="btn-ebob" onclick="useSpell('ebob')">
+            🟢 EBOB KALKANI
+            <span class="cooldown" id="cd-ebob">Hazır</span>
+          </button>
+          <button class="spell-btn ekok" id="btn-ekok" onclick="useSpell('ekok')">
+            🔵 EKOK SALDIRI
+            <span class="cooldown" id="cd-ekok">Hazır</span>
+          </button>
+          <button class="spell-btn kalan" id="btn-kalan" onclick="useSpell('kalan')">
+            🔴 KALAN BÜYÜSÜ
+            <span class="cooldown" id="cd-kalan">Hazır</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Turn Info -->
+      <div class="info-card" style="width:100%;max-width:500px;">
+        <div class="ic-title"><span class="ic-icon">📜</span> GÖREV</div>
+        <div id="task-desc" style="font-size:0.88rem;color:var(--silver);line-height:1.7;">
+          Hedef sayının <span style="color:var(--gold2)">bölenlerinden</span> veya <span style="color:var(--gold2)">asal çarpanlarından</span> birini kalede bul ve tıkla.
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="turn-progress" style="width:4%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Dragon -->
+    <div class="side-panel right">
+      <div class="panel-head">🔥 EJDERHANIN GÜÇLERİ</div>
+
+      <div>
+        <div class="hp-bar-wrap">
+          <div class="hp-label"><span>🔥 Ejderha HP</span><span id="hp-dragon-val">100</span></div>
+          <div class="hp-bar"><div class="hp-fill dragon" id="hp-dragon-bar" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-title"><span class="ic-icon">🟢</span> EBOB Kalkanı</div>
+        <div id="ebob-info-d" class="green">Hazır</div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-title"><span class="ic-icon">🔵</span> EKOK Saldırısı</div>
+        <div id="ekok-info-d" class="blue">Hazır</div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-title"><span class="ic-icon">🔴</span> Kalan Büyüsü</div>
+        <div id="kalan-info-d" class="red">Hazır</div>
+      </div>
+
+      <!-- LOG -->
+      <div class="panel-head" style="margin-top:0.5rem;">📋 SAVAŞ GÜNLÜĞÜ</div>
+      <div class="log-box" id="log-box"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ SPELL MODAL ══════════════════ -->
+<div class="modal-overlay" id="spell-modal">
+  <div class="modal">
+    <h2 id="spell-modal-title">Büyü</h2>
+    <p id="spell-modal-desc"></p>
+    <div style="display:flex;gap:0.7rem;justify-content:center;flex-wrap:wrap;margin:0.8rem 0;">
+      <div>
+        <div style="font-family:'JetBrains Mono';font-size:0.65rem;color:var(--silver);margin-bottom:0.2rem;">Sayı A</div>
+        <input type="number" class="wizard-input" id="spell-a" placeholder="a" min="1" max="999" style="width:90px;">
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:0.3rem;font-family:'JetBrains Mono';color:var(--gold);">&</div>
+      <div>
+        <div style="font-family:'JetBrains Mono';font-size:0.65rem;color:var(--silver);margin-bottom:0.2rem;">Sayı B</div>
+        <input type="number" class="wizard-input" id="spell-b" placeholder="b" min="1" max="999" style="width:90px;">
+      </div>
+    </div>
+    <div id="spell-modal-result" style="font-family:'JetBrains Mono';font-size:0.8rem;color:var(--gold2);min-height:1.5rem;margin-bottom:0.5rem;"></div>
+    <div class="modal-btns">
+      <button class="btn success" onclick="confirmSpell()">✓ Uygula</button>
+      <button class="btn danger" onclick="closeSpellModal()">✗ İptal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ RESULT MODAL ══════════════════ -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <div id="result-icon" style="font-size:3rem;margin-bottom:0.5rem;">🏆</div>
+    <h2 id="result-title">Oyun Bitti</h2>
+    <p id="result-desc"></p>
+    <div style="margin:1rem 0;display:flex;gap:2rem;justify-content:center;">
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono';font-size:0.7rem;color:var(--silver);margin-bottom:0.2rem;">⚔ ŞÖVALYE</div>
+        <div class="big-num" id="final-score-k" style="color:#74b9ff;">0</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'JetBrains Mono';font-size:0.7rem;color:var(--silver);margin-bottom:0.2rem;">🔥 EJDERHA</div>
+        <div class="big-num" id="final-score-d" style="color:#e17055;">0</div>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn" onclick="startGame(gameMode)">🔄 Tekrar Oyna</button>
+      <button class="btn danger" onclick="goHome()">🏠 Ana Menü</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  ASAL KALE — Game Logic
+// ══════════════════════════════════════════════════════
+
+let gameMode = 'pvp';
+let currentTurn = 'knight'; // 'knight' | 'dragon'
+let turnNumber = 1;
+let maxTurns = 24;
+let targetNumber = 0;
+let board = []; // { num, owner: null|'knight'|'dragon', isPrime: bool }
+let scores = { knight: 0, dragon: 0 };
+let hp = { knight: 100, dragon: 100 };
+let spellCooldowns = {
+  knight: { ebob: 0, ekok: 0, kalan: 0 },
+  dragon: { ebob: 0, ekok: 0, kalan: 0 }
+};
+let timerInterval = null;
+let timerSeconds = 30;
+let activeSpell = null;
+let aiThinking = false;
+
+// Board numbers: 2–37 (36 numbers)
+const BOARD_NUMS = Array.from({length: 36}, (_, i) => i + 2);
+
+// ── Math helpers ──
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i <= Math.sqrt(n); i++) if (n % i === 0) return false;
+  return true;
+}
+
+function primeFactors(n) {
+  const factors = [];
+  let d = 2;
+  while (d * d <= n) {
+    while (n % d === 0) { factors.push(d); n = Math.floor(n / d); }
+    d++;
+  }
+  if (n > 1) factors.push(n);
+  return factors;
+}
+
+function divisors(n) {
+  const divs = [];
+  for (let i = 1; i <= n; i++) if (n % i === 0) divs.push(i);
+  return divs;
+}
+
+function gcd(a, b) { while (b) { [a, b] = [b, a % b]; } return a; }
+function lcm(a, b) { return (a * b) / gcd(a, b); }
+
+// Valid cells: divisors or prime factors of target that exist on board
+function getValidCells() {
+  const divs = divisors(targetNumber);
+  const factors = [...new Set(primeFactors(targetNumber))];
+  const valid = new Set([...divs, ...factors]);
+  return BOARD_NUMS.filter(n => valid.has(n));
+}
+
+// ── Init ──
+function startGame(mode) {
+  gameMode = mode;
+  currentTurn = 'knight';
+  turnNumber = 1;
+  scores = { knight: 0, dragon: 0 };
+  hp = { knight: 100, dragon: 100 };
+  spellCooldowns = {
+    knight: { ebob: 0, ekok: 0, kalan: 0 },
+    dragon: { ebob: 0, ekok: 0, kalan: 0 }
+  };
+
+  board = BOARD_NUMS.map(n => ({ num: n, owner: null, isPrime: isPrime(n) }));
+  document.getElementById('intro').classList.remove('active');
+  document.getElementById('game').classList.add('active');
+
+  clearLog();
+  renderBoard();
+  updateScoreUI();
+  updateHPUI();
+  newTurn();
+}
+
+function goHome() {
+  clearTimerInterval();
+  document.getElementById('game').classList.remove('active');
+  document.getElementById('result-modal').classList.remove('show');
+  document.getElementById('intro').classList.add('active');
+}
+
+// ── New Turn ──
+function newTurn() {
+  if (turnNumber > maxTurns || board.every(c => c.owner !== null)) {
+    endGame();
+    return;
+  }
+
+  // Pick target number: random 12–120, ensuring at least 2 valid cells on board
+  let attempts = 0;
+  do {
+    targetNumber = Math.floor(Math.random() * 109) + 12;
+    attempts++;
+  } while (getValidCells().filter(n => board.find(c => c.num === n && !c.owner)).length < 2 && attempts < 50);
+
+  // Display
+  const numEl = document.getElementById('target-num');
+  numEl.textContent = targetNumber;
+  numEl.classList.remove('pop');
+  setTimeout(() => numEl.classList.add('pop'), 10);
+
+  // Factor chain
+  const fc = primeFactors(targetNumber);
+  document.getElementById('factor-chain').textContent =
+    fc.length > 0 ? `${targetNumber} = ${fc.join(' × ')}` : '';
+
+  // Task desc
+  const divs = divisors(targetNumber).filter(d => d >= 2 && d <= 37);
+  const factors = [...new Set(primeFactors(targetNumber))].filter(f => f <= 37);
+  document.getElementById('task-desc').innerHTML =
+    `<span style="color:var(--gold2)">${targetNumber}</span> sayısının kalede bulunan bölenleri: <span style="color:var(--emerald2)">[${divs.join(', ')}]</span><br>
+     Asal çarpanları: <span style="color:var(--sapphire2)">[${[...new Set(factors)].join(', ')}]</span><br>
+     Sahipsiz geçerli bir hücreye tıkla!`;
+
+  // Turn UI
+  updateTurnUI();
+  updateSpellUI();
+
+  // Reduce cooldowns
+  const player = currentTurn;
+  for (const spell of ['ebob', 'ekok', 'kalan']) {
+    if (spellCooldowns[player][spell] > 0) spellCooldowns[player][spell]--;
+  }
+
+  updateSpellUI();
+  highlightValid();
+  startTimer();
+
+  document.getElementById('turn-counter').textContent = `Tur ${turnNumber}/${maxTurns}`;
+  document.getElementById('turn-progress').style.width = `${(turnNumber / maxTurns) * 100}%`;
+
+  log(`--- Tur ${turnNumber}: Hedef = ${targetNumber} ---`, 'system-log');
+
+  // AI turn
+  if (gameMode === 'ai' && currentTurn === 'dragon') {
+    clearTimerInterval();
+    setTimeout(aiTurn, 900 + Math.random() * 600);
+  }
+}
+
+// ── AI Turn ──
+function aiTurn() {
+  if (currentTurn !== 'dragon') return;
+
+  // Try spell (30% chance if available)
+  const spell = ['ebob', 'ekok', 'kalan'].find(s => spellCooldowns.dragon[s] === 0);
+  if (spell && Math.random() < 0.3) {
+    // Auto-resolve spell with plausible numbers
+    const a = targetNumber;
+    const b = Math.floor(Math.random() * 20) + 2;
+    aiUseSpell(spell, a, b);
+    setTimeout(() => aiClickCell(), 600);
+  } else {
+    aiClickCell();
+  }
+}
+
+function aiClickCell() {
+  const validNums = getValidCells();
+  const availableCells = board.filter(c => !c.owner && validNums.includes(c.num));
+
+  if (availableCells.length === 0) {
+    // Random unclaimed cell (wrong answer)
+    const freeCells = board.filter(c => !c.owner);
+    if (freeCells.length === 0) { nextTurn(); return; }
+    const cell = freeCells[Math.floor(Math.random() * freeCells.length)];
+    selectCell(cell.num, true);
+  } else {
+    // Prefer prime factor cells
+    const primeCell = availableCells.find(c => c.isPrime);
+    const pick = primeCell || availableCells[Math.floor(Math.random() * availableCells.length)];
+    selectCell(pick.num, true);
+  }
+}
+
+function aiUseSpell(spell, a, b) {
+  const result = spell === 'ebob' ? gcd(a, b) : spell === 'ekok' ? lcm(a, b) : a % b;
+  applySpellEffect(spell, 'dragon', result, a, b);
+  spellCooldowns.dragon[spell] = spell === 'ebob' ? 1 : spell === 'ekok' ? 2 : 3;
+  updateSpellUI();
+}
+
+// ── Cell Click ──
+function selectCell(num, isAI = false) {
+  const cell = board.find(c => c.num === num);
+  if (!cell || cell.owner) return;
+  if (gameMode === 'ai' && currentTurn === 'dragon' && !isAI) return; // Block clicks during AI turn
+
+  clearTimerInterval();
+
+  const validNums = getValidCells();
+  const isValid = validNums.includes(num);
+  const player = currentTurn;
+  const other = player === 'knight' ? 'dragon' : 'knight';
+
+  if (isValid) {
+    cell.owner = player;
+    scores[player]++;
+    // HP damage on capture (slightly damages enemy)
+    hp[other] = Math.max(0, hp[other] - 3);
+    log(`${playerName(player)} → Hücre ${num} fethedildi! (${isDivisor(num) ? 'Bölen' : 'Asal Çarpan'})`, `${player}-log`);
+    log(`Doğru! +1 puan`, 'success-log');
+    renderBoard(num);
+    updateScoreUI();
+    updateHPUI();
+  } else {
+    // Wrong: enemy gets a point
+    hp[player] = Math.max(0, hp[player] - 5);
+    log(`${playerName(player)} → Yanlış! Hücre ${num} bu sayının böleni değil.`, `${player}-log`);
+    log(`Rakip puan kazandı!`, 'success-log');
+    scores[other]++;
+    updateScoreUI();
+    updateHPUI();
+  }
+
+  nextTurn();
+}
+
+function isDivisor(num) {
+  return targetNumber % num === 0;
+}
+
+// ── Next Turn ──
+function nextTurn() {
+  if (hp.knight <= 0 || hp.dragon <= 0 || turnNumber >= maxTurns || board.every(c => c.owner)) {
+    endGame();
+    return;
+  }
+  currentTurn = currentTurn === 'knight' ? 'dragon' : 'knight';
+  turnNumber++;
+  renderBoard();
+  newTurn();
+}
+
+// ── Spell System ──
+function useSpell(spellType) {
+  const player = currentTurn;
+  if (gameMode === 'ai' && player === 'dragon') return;
+  if (spellCooldowns[player][spellType] > 0) return;
+
+  const titles = { ebob: '🟢 EBOB Kalkanı', ekok: '🔵 EKOK Saldırısı', kalan: '🔴 Kalan Büyüsü' };
+  const descs = {
+    ebob: 'İki sayı gir. EBOB'unu doğru hesaplarsan o kadar turunu korursun (rakip puan alamaz).',
+    ekok: 'İki sayı gir. EKOK'unu doğru hesaplarsan ek hücre fethediyorsun.',
+    kalan: 'Bölme kalanını doğru hesapla, rakipten 1 hücre geri al.'
+  };
+
+  activeSpell = spellType;
+  document.getElementById('spell-modal-title').textContent = titles[spellType];
+  document.getElementById('spell-modal-desc').textContent = descs[spellType];
+  document.getElementById('spell-modal-result').textContent = '';
+  document.getElementById('spell-a').value = '';
+  document.getElementById('spell-b').value = '';
+  document.getElementById('spell-modal').classList.add('show');
+}
+
+document.addEventListener('input', () => {
+  if (!activeSpell) return;
+  const a = parseInt(document.getElementById('spell-a').value);
+  const b = parseInt(document.getElementById('spell-b').value);
+  if (!a || !b || b === 0) return;
+  let result = '', label = '';
+  if (activeSpell === 'ebob') { result = gcd(a, b); label = `EBOB(${a}, ${b}) = ${result}`; }
+  else if (activeSpell === 'ekok') { result = lcm(a, b); label = `EKOK(${a}, ${b}) = ${result}`; }
+  else { result = a % b; label = `${a} ÷ ${b} = ${Math.floor(a/b)} kalan ${result}`; }
+  document.getElementById('spell-modal-result').textContent = label;
+});
+
+function confirmSpell() {
+  const a = parseInt(document.getElementById('spell-a').value);
+  const b = parseInt(document.getElementById('spell-b').value);
+  if (!a || !b || b === 0) { alert('Geçerli sayı gir!'); return; }
+
+  let result;
+  if (activeSpell === 'ebob') result = gcd(a, b);
+  else if (activeSpell === 'ekok') result = lcm(a, b);
+  else result = a % b;
+
+  const player = currentTurn;
+  applySpellEffect(activeSpell, player, result, a, b);
+  spellCooldowns[player][activeSpell] = activeSpell === 'ebob' ? 1 : activeSpell === 'ekok' ? 2 : 3;
+  updateSpellUI();
+  closeSpellModal();
+}
+
+function applySpellEffect(spell, player, result, a, b) {
+  const other = player === 'knight' ? 'dragon' : 'knight';
+  if (spell === 'ebob') {
+    hp[player] = Math.min(100, hp[player] + result);
+    log(`${playerName(player)} EBOB(${a},${b})=${result} → ${result} HP kazandı!`, `${player}-log`);
+    updateHPUI();
+  } else if (spell === 'ekok') {
+    // Claim a random unclaimed valid cell as bonus
+    const validNums = getValidCells();
+    const bonus = board.find(c => !c.owner && validNums.includes(c.num));
+    if (bonus) {
+      bonus.owner = player;
+      scores[player]++;
+      renderBoard(bonus.num);
+      updateScoreUI();
+      log(`${playerName(player)} EKOK(${a},${b})=${result} → Ekstra hücre ${bonus.num} fethedildi!`, `${player}-log`);
+    } else {
+      log(`${playerName(player)} EKOK kullandı ama uygun hücre kalmadı.`, `${player}-log`);
+    }
+  } else {
+    // Steal a cell from opponent
+    const stolen = board.find(c => c.owner === other);
+    if (stolen) {
+      stolen.owner = player;
+      scores[player]++;
+      scores[other] = Math.max(0, scores[other] - 1);
+      renderBoard(stolen.num);
+      updateScoreUI();
+      log(`${playerName(player)} Kalan büyüsü! ${stolen.num} hücresi geri alındı!`, `${player}-log`);
+    }
+  }
+}
+
+function closeSpellModal() {
+  document.getElementById('spell-modal').classList.remove('show');
+  activeSpell = null;
+}
+
+// ── Timer ──
+function startTimer() {
+  timerSeconds = 30;
+  updateTimerUI();
+  clearTimerInterval();
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerUI();
+    if (timerSeconds <= 0) {
+      clearTimerInterval();
+      log(`${playerName(currentTurn)} süreyi aştı! Tur geçti.`, 'system-log');
+      hp[currentTurn] = Math.max(0, hp[currentTurn] - 8);
+      updateHPUI();
+      nextTurn();
+    }
+  }, 1000);
+}
+
+function clearTimerInterval() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function updateTimerUI() {
+  const el = document.getElementById('timer-ring');
+  el.textContent = timerSeconds;
+  el.classList.toggle('urgent', timerSeconds <= 8);
+}
+
+// ── Render ──
+function renderBoard(justCaptured = null) {
+  const grid = document.getElementById('castle-grid');
+  grid.innerHTML = '';
+  const validNums = getValidCells();
+
+  board.forEach(cell => {
+    const div = document.createElement('div');
+    div.className = 'castle-cell';
+    if (cell.isPrime) div.classList.add('prime');
+
+    if (cell.owner) {
+      div.classList.add(cell.owner);
+      if (cell.num === justCaptured) div.classList.add('just-captured');
+    } else {
+      if (validNums.includes(cell.num)) div.classList.add('highlight');
+    }
+
+    div.innerHTML = `<strong>${cell.num}</strong>`;
+    const typeTag = document.createElement('span');
+    typeTag.className = 'cell-type';
+    typeTag.textContent = cell.isPrime ? 'A' : 'B';
+    div.appendChild(typeTag);
+
+    if (!cell.owner) {
+      div.onclick = () => selectCell(cell.num);
+    } else {
+      div.classList.add('disabled');
+    }
+    grid.appendChild(div);
+  });
+}
+
+function highlightValid() { renderBoard(); }
+
+function updateTurnUI() {
+  const badge = document.getElementById('turn-badge');
+  if (currentTurn === 'knight') {
+    badge.textContent = '⚔ ŞÖVALYENİN TURU';
+    badge.className = 'turn-badge knight';
+  } else {
+    badge.textContent = '🔥 EJDERHANIN TURU';
+    badge.className = 'turn-badge dragon';
+  }
+}
+
+function updateScoreUI() {
+  document.getElementById('score-knight').textContent = scores.knight;
+  document.getElementById('score-dragon').textContent = scores.dragon;
+}
+
+function updateHPUI() {
+  document.getElementById('hp-knight-val').textContent = hp.knight;
+  document.getElementById('hp-dragon-val').textContent = hp.dragon;
+  document.getElementById('hp-knight-bar').style.width = hp.knight + '%';
+  document.getElementById('hp-dragon-bar').style.width = hp.dragon + '%';
+}
+
+function updateSpellUI() {
+  const p = currentTurn;
+  const spells = ['ebob', 'ekok', 'kalan'];
+  const ids = ['btn-ebob', 'btn-ekok', 'btn-kalan'];
+  const cdIds = ['cd-ebob', 'cd-ekok', 'cd-kalan'];
+
+  spells.forEach((spell, i) => {
+    const cd = spellCooldowns[p][spell];
+    const btn = document.getElementById(ids[i]);
+    const cdEl = document.getElementById(cdIds[i]);
+    btn.disabled = cd > 0;
+    cdEl.textContent = cd > 0 ? `${cd} tur bekleniyor` : 'Hazır';
+
+    // Side panel info
+    const infoK = document.getElementById(`${spell}-info-k`);
+    const infoD = document.getElementById(`${spell}-info-d`);
+    if (infoK) infoK.textContent = spellCooldowns.knight[spell] > 0 ? `${spellCooldowns.knight[spell]} tur bekleniyor` : 'Hazır';
+    if (infoD) infoD.textContent = spellCooldowns.dragon[spell] > 0 ? `${spellCooldowns.dragon[spell]} tur bekleniyor` : 'Hazır';
+  });
+}
+
+// ── End Game ──
+function endGame() {
+  clearTimerInterval();
+  const winner = scores.knight > scores.dragon ? 'knight' :
+                 scores.dragon > scores.knight ? 'dragon' : 'draw';
+
+  document.getElementById('final-score-k').textContent = scores.knight;
+  document.getElementById('final-score-d').textContent = scores.dragon;
+
+  let icon, title, desc;
+  if (winner === 'knight') {
+    icon = '⚔'; title = 'Şövalye Kazandı!';
+    desc = `Büyük bir zafer! Şövalye ${scores.knight} hücre ile kaleyi ele geçirdi.`;
+  } else if (winner === 'dragon') {
+    icon = '🔥'; title = 'Ejderha Kazandı!';
+    desc = `Alevler yükseldi! Ejderha ${scores.dragon} hücre ile kaleyi fethetti.`;
+  } else {
+    icon = '🤝'; title = 'Beraberlik!';
+    desc = `İki taraf da ${scores.knight} hücre ile eşit güçte savaştı!`;
+  }
+
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-desc').textContent = desc;
+  document.getElementById('result-modal').classList.add('show');
+}
+
+// ── Wizard Calculator ──
+function calcEBOB() {
+  const a = parseInt(document.getElementById('calc-a').value);
+  const b = parseInt(document.getElementById('calc-b').value);
+  if (!a || !b) { document.getElementById('wizard-result').textContent = '→ Sayı gir'; return; }
+  document.getElementById('wizard-result').textContent = `EBOB(${a}, ${b}) = ${gcd(a, b)}`;
+}
+function calcEKOK() {
+  const a = parseInt(document.getElementById('calc-a').value);
+  const b = parseInt(document.getElementById('calc-b').value);
+  if (!a || !b) { document.getElementById('wizard-result').textContent = '→ Sayı gir'; return; }
+  document.getElementById('wizard-result').textContent = `EKOK(${a}, ${b}) = ${lcm(a, b)}`;
+}
+function calcKalan() {
+  const a = parseInt(document.getElementById('calc-a').value);
+  const b = parseInt(document.getElementById('calc-b').value);
+  if (!a || !b || b === 0) { document.getElementById('wizard-result').textContent = '→ Sayı gir'; return; }
+  document.getElementById('wizard-result').textContent = `${a} ÷ ${b} = ${Math.floor(a/b)} kalan ${a % b}`;
+}
+
+// ── Log ──
+function log(msg, cls = '') {
+  const box = document.getElementById('log-box');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${cls}`;
+  entry.textContent = msg;
+  box.appendChild(entry);
+  box.scrollTop = box.scrollHeight;
+}
+function clearLog() {
+  document.getElementById('log-box').innerHTML = '';
+}
+
+// ── Utils ──
+function playerName(p) { return p === 'knight' ? '⚔ Şövalye' : '🔥 Ejderha'; }
+
+// Close modal on outside click
+document.getElementById('spell-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeSpellModal();
+});
+</script>
+</body>
+</html>
